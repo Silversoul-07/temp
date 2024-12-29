@@ -1,0 +1,47 @@
+Home Page:
+1) Recommedation Algorithm based on user interest, following, My clusters(own cluster)
+
+explore:
+1) fix algorithm to show others clusters and rank them
+
+Search:
+1) autocomplete.js
+2) Semantic Search (include color search), 
+
+Visual Search 
+1) reuse gallery layout and improve design
+2) Visual Search
+3) permanetly cache results
+
+Upload
+1) Improve Design
+2) hash to deduplicate, private public images
+
+profile
+1) different previe for cluster of cluster and images
+2) merge clusters
+
+cluster
+1) Support Cluster of Cluster 
+2) Forking feature: 
+
+Gallery:
+1) Masonry layout top to bottom, animation, infinite scrolling, paging, support visual search layout
+2) Like, Dislike, Add to cluster
+
+View:
+1) hide nsfw image and improve design
+2) permanetly cached recomedations
+3) personalized Recommedation
+
+Redis:
+1) redis api caching final
+
+Tags:
+used in home, search, way to filter images All,Following, anime etc
+
+Settings:
+setup
+idk what to implement
+
+create concept: every image should belong to a cluster, cluster contains one or more images, different users can o n same image by sharing image url, images can be public or private, user can make image private, cluster privage or profile private (easy to expensive), truely 
