@@ -1,0 +1,18 @@
+# Core dependencies
+sqlalchemy==2.0.25
+fastapi==0.109.0
+pydantic==2.6.1
+psycopg2-binary==2.9.9
+python-multipart==0.0.9
+minio==7.2.3
+uvicorn==0.27.0.post1
+alembic==1.13.1
+
+# Additional dependencies for Docker compatibility
+requests==2.31.0
+python-jose==3.3.0
+passlib==1.7.4
+fake_useragent==1.5.1
+opencv-python
+pydantic[email]
+PyJWT

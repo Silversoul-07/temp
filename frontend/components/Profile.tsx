@@ -12,6 +12,7 @@ import { CollectionItem, UserProfile } from '@/lib/types';
 import Link from 'next/link';
 import { useClient } from '@/lib/helper';
 import { addFollower, removeFollower } from '@/lib/api';
+import { toast } from "sonner"
 
 interface Profile {
   name: string;
@@ -24,6 +25,7 @@ interface Profile {
 type ProfileProps = {
   userData: UserProfile;
   exploreItems: CollectionItem[];
+  token: string;
 };
 
 const EditProfile= ({profile}: {profile:Profile}) => {
@@ -52,6 +54,8 @@ const EditProfile= ({profile}: {profile:Profile}) => {
       setAvatarFile(e.target.files[0]);
     }
   };
+
+
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -124,9 +128,9 @@ const EditProfile= ({profile}: {profile:Profile}) => {
 };
 
 
-const ProfilePage: React.FC<ProfileProps> = ({ userData, exploreItems }) => {
-  const [isFollowing, setIsFollowing] = React.useState(userData.is_following);
-  const [followers, setFollowers] = React.useState(userData.follower_count);
+const ProfilePage: React.FC<ProfileProps> = ({ userData, exploreItems, token }) => {
+  const [isFollowing, setIsFollowing] = React.useState(null);
+  const [followers, setFollowers] = React.useState(null);
   const handleFollow = async () => {
     try {
       await addFollower(userData.username);
@@ -145,6 +149,12 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, exploreItems }) => {
       console.error(error);
     }
   }
+
+  const handleCopyToken = () => {
+    navigator.clipboard.writeText(token);
+    toast.success('Token copied to clipboard');
+  }
+
   return (
     <div className="w-full max-w-[2000px] mx-auto">
       {/* Profile Header */}
@@ -166,18 +176,23 @@ const ProfilePage: React.FC<ProfileProps> = ({ userData, exploreItems }) => {
           {userData.bio || 'No bio provided'}
         </p>
 
-        {userData.is_owner ? (
-          <EditProfile profile={userData} />
-        ) : (isFollowing ? (
-          <Button variant="default" size="sm" className="mt-2" onClick={handleUnfollow}>
-            Unfollow
-          </Button>
-          ) : (
-            <Button variant="default" size="sm" className="mt-2" onClick={handleFollow}>
-              Follow
-            </Button>
-          )
-        )}
+        {token !== null ? (
+                  <div className="space-x-4">
+                    <EditProfile profile={userData} />
+                    <Button variant="default" size="sm" className="mt-2" onClick={handleCopyToken}>
+                      Copy Token
+                    </Button>
+                    </div>
+                ) : (isFollowing ? (
+                  <Button variant="default" size="sm" className="mt-2" onClick={handleUnfollow}>
+                    Unfollow
+                  </Button>
+                  ) : (
+                    <Button variant="default" size="sm" className="mt-2" onClick={handleFollow}>
+                      Follow
+                    </Button>
+                  )
+                )}
       </div>
 
       {/* Explore Items Grid */}

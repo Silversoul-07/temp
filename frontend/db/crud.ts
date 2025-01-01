@@ -7,7 +7,6 @@ import { User, Image, Follow } from "@/db/models";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
-
 export const  decodeToken = async (token: string): Promise<JWTPayload> => {
     const payload = jwt.verify(token, JWT_SECRET) as JWTPayload;
     const client = await clientPromise;
@@ -138,30 +137,43 @@ export const getUserFromToken = async (token: string): Promise<UserSession | nul
 };
 
 // Function to get the latest feed
-export const getLatestFeed = async (num: number): Promise<Array<{ id: string; url: string; title: string; desc?: string }>> => {
+export const getLatestFeed = async (
+    limit: number,
+    page: number
+  ): Promise<
+    Array<{
+      id: string;
+      url: string;
+      title: string;
+      desc?: string;
+    }>
+  > => {
     try {
-        const client = await clientPromise;
-        const db = client.db("test"); // Use your database name
-        const imagesCollection = db.collection<Image>("images");
-
-        const images = await imagesCollection.find({})
-            .sort({ created_at: -1 })
-            .limit(num)
-            .project({ url: 1, title: 1, desc: 1 })
-            .toArray();
-
-        return images.map(image => ({
-            id: image._id?.toString() || '',
-            url: image.url,
-            title: image.title,
-            desc: image.desc,
-        }));
+      const client = await clientPromise;
+      const db = client.db("test"); // Use your database name
+      const imagesCollection = db.collection<Image>("images");
+  
+      const skip = limit * (page - 1);
+  
+      const images = await imagesCollection
+        .find({})
+        .sort({ created_at: -1 })
+        .skip(skip)
+        .limit(limit)
+        .project({ url: 1, title: 1, desc: 1 })
+        .toArray();
+  
+      return images.map((image) => ({
+        id: image._id?.toString() || "",
+        url: image.url,
+        title: image.title,
+        desc: image.desc,
+      }));
     } catch (error) {
-        console.error("Error fetching latest feed:", error);
-        return [];
+      console.error("Error fetching latest feed:", error);
+      return [];
     }
-};
-
+  };
 
 
 // Add follower to a user
@@ -540,6 +552,29 @@ export async function getImagesInCluster(title: string){
         const collectionsCollection = db.collection("collections");
 
         const collection = await collectionsCollection.findOne({ title });
+        if (!collection) {
+            throw new Error("Collection not found");
+        }
+
+        const imageCollection = db.collection("image_collection");
+        const image_ids = await imageCollection.find({ collection_id: collection._id }).toArray();
+        const imagesCollection = db.collection("images");
+        const images = await imagesCollection.find({ _id: { $in: image_ids.map(image => image.image_id) } }).toArray();
+        return images;
+    } catch (error) {
+        console.error("Error fetching images in collection:", error);
+        return [];
+    }
+}
+
+export async function getUserClusterImages(user_id:ObjectId, title:string){
+    "gets all images in a collection if owned by user"
+    try {
+        const client = await clientPromise;
+        const db = client.db("test");
+        const collectionsCollection = db.collection("collections");
+
+        const collection = await collectionsCollection.findOne({ title, user_id: user_id });
         if (!collection) {
             throw new Error("Collection not found");
         }

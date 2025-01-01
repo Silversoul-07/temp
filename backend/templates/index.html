@@ -1,0 +1,103 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .search-container {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .result-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .score {
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Search System</h1>
+    
+    <div class="search-container">
+        <h2>Index New Image</h2>
+        <form action="/index" method="post" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*" required>
+            <button type="submit">Index Image</button>
+        </form>
+    </div>
+
+    <div class="search-container">
+        <h2>Search</h2>
+        <form id="searchForm" enctype="multipart/form-data">
+            <div>
+                <label>Search by text:</label>
+                <input type="text" id="queryText" name="query_text">
+            </div>
+            <div style="margin-top: 10px;">
+                <label>Or search by image:</label>
+                <input type="file" id="queryImage" name="query_image" accept="image/*">
+            </div>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <div id="results" class="results"></div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const queryText = document.getElementById('queryText').value;
+            const queryImage = document.getElementById('queryImage').files[0];
+            
+            if (queryText) {
+                formData.append('query_text', queryText);
+            } else if (queryImage) {
+                formData.append('query_image', queryImage);
+            } else {
+                alert('Please provide either text or image query');
+                return;
+            }
+
+            const response = await fetch('/search', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            
+            data.results.forEach(result => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'result-item';
+                resultItem.innerHTML = `
+                    <img src="${result.image_path}" alt="Search result">
+                    <div class="score">Score: ${result.score.toFixed(3)}</div>
+                `;
+                resultsDiv.appendChild(resultItem);
+            });
+        });
+    </script>
+</body>
+</html>

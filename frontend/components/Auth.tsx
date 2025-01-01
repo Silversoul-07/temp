@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Cookies from 'js-cookie';
 import { useTheme } from 'next-themes';
-import { toast } from "sonner"
 import { signIn } from '@/lib/api';
+import { toast } from "sonner"
+
 interface AuthPageProps {
   mode: 'login' | 'signup';
 }

@@ -1,3 +1,4 @@
+'use server'
 import axios from "axios";
 import { getToken } from "@/lib/apihelp";
 
@@ -33,8 +34,8 @@ export async function fetchTags() {
     return response.data.tags;
 }
 
- export async function fetchMedias() {
-    const response = await apiClient.get(`/media?limit=10`);
+ export async function fetchMedias(limit: number = 10, page: number = 1) {
+    const response = await apiClient.get(`/media?limit=${limit}&page=${page}`);
     return response.data;
   }
 
@@ -146,9 +147,9 @@ export async function fetchTags() {
     }
   }
 
-  export const fetchCollectionItems = async (username: string) => {
+  export const fetchCollectionItems = async (username: string, cluster: string) => {
     try {
-      const response = await apiClient.get(`/users/${username}/collections`);
+      const response = await apiClient.get(`/users/${username}/cluster/${cluster}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching collection items:', error);

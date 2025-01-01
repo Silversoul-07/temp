@@ -3,14 +3,14 @@ import mime from 'mime-types';
 import { Readable } from 'stream';
 import { v4 as uuidv4 } from 'uuid';
 
-const MINIO_ENDPOINT = process.env.MINIO_ENDPOINT || 'minio:9000';
+const MINIO_ENDPOINT = process.env.MINIO_ENDPOINT || 'localhost:9000';
 const MINIO_ACCESS_KEY = process.env.MINIO_ACCESS_KEY || 'minioadmin';
 const MINIO_SECRET_KEY = process.env.MINIO_SECRET_KEY || 'minioadmin';
 
 // Initialize MinIO client
 export const getMinioClient = () => {
   return new Client({
-    endPoint: process.env.MINIO_ENDPOINT?.split(':')[0] || 'minio',
+    endPoint: process.env.MINIO_ENDPOINT?.split(':')[0] || 'localhost',
     port: parseInt(MINIO_ENDPOINT.split(':')[1]) || 9000,
     useSSL: false,
     accessKey: MINIO_ACCESS_KEY,

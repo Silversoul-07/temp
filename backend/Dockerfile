@@ -1,25 +1,23 @@
-FROM python:3.11-slim
-
-RUN apt-get update && apt-get install -y curl
-RUN apt-get install python3-opencv -y
+# Dockerfile
+FROM python:3.9-slim
 
 WORKDIR /app
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# Copy application code
+COPY app/ .
+COPY templates/ templates/
 
-# Set the environment variable (default to production)
-ENV APP_ENV=production
+# Create upload directory
+RUN mkdir -p static/uploads
 
-# Conditional CMD based on the environment
-# CMD ["sh", "-c", "if [ \"$APP_ENV\" = \"development\" ]; then \
-#     uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload; \
-#     else \
-#     uvicorn app.main:app --host 0.0.0.0 --port 8000; \
-#     fi"]
-
-# --reload
-CMD ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
-
+# Run the application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

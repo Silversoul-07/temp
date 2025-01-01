@@ -2,6 +2,7 @@ import { Metadata, ResolvingMetadata } from "next";
 import Profile from "@/components/Profile";
 import { cookies } from 'next/headers'
 import { getProfile, getUserCollections } from "@/lib/api";
+// cookies from next/headers
 
 type Props = {
   params: Promise<{ username: string }>
@@ -25,10 +26,13 @@ const ProfilePage: React.FC = async () => {
   const username = 'me';
   const userData = await getProfile(username);
   const collectionItems = await getUserCollections(username);
+  const cookieStore = await cookies()
+  const token = cookieStore.get('token')?.value as string;
   return (
     <Profile 
       userData={userData} 
       exploreItems={collectionItems} 
+      token={token}
     />
   );
 };

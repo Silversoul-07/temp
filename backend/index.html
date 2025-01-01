@@ -1,0 +1,83 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masonry Layout Gallery with Infinite Scrolling</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            width: 90%;
+            max-width: 1200px;
+        }
+        .gallery img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="gallery" class="gallery"><img src="https://via.placeholder.com/150/92c952" alt="accusamus beatae ad facilis cum similique qui sunt"><img src="https://via.placeholder.com/150/771796" alt="reprehenderit est deserunt velit ipsam"><img src="https://via.placeholder.com/150/24f355" alt="officia porro iure quia iusto qui ipsa ut modi"><img src="https://via.placeholder.com/150/d32776" alt="culpa odio esse rerum omnis laboriosam voluptate repudiandae"><img src="https://via.placeholder.com/150/f66b97" alt="natus nisi omnis corporis facere molestiae rerum in"></div>
+    <div id="loader" class="loader" style="display: none;">Loading...</div>
+
+    <script>
+        const gallery = document.getElementById('gallery');
+        const loader = document.getElementById('loader');
+        let page = 1;
+        const imagesPerPage = 5;
+        let loading = false;
+
+        function loadImages() {
+            if (loading) return;
+            loading = true;
+            loader.style.display = 'block';
+
+            fetch(`https://jsonplaceholder.typicode.com/photos?_start=${(page - 1) * imagesPerPage}&_limit=${imagesPerPage}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(item => {
+                        const img = document.createElement('img');
+                        img.src = item.thumbnailUrl;
+                        img.alt = item.title;
+                        gallery.appendChild(img);
+                    });
+                    loading = false;
+                    loader.style.display = 'none';
+                    page++;
+                })
+                .catch(error => {
+                    console.error('Error loading images:', error);
+                    loading = false;
+                    loader.style.display = 'none';
+                });
+        }
+
+        function checkScroll() {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+                loadImages();
+            }
+        }
+
+        window.addEventListener('scroll', checkScroll);
+
+        // Initial load
+        loadImages();
+    </script>
+
+</body></html>

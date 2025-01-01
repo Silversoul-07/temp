@@ -15,9 +15,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetTitle, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import DragAndDrop from '@/components/DropBox';
-import ImageUploader from '@/components/Create';
+// import ImageUploader from '@/components/Create';
 import Cookies from 'js-cookie';
-
+import ImageUploader from './ImageUploader';
+import ImageUploadForm from './ImageUploadForm';
 const Header = () => {
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');

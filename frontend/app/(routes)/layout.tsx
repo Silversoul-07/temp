@@ -11,7 +11,7 @@ export default function Layout({
   return (
     <div className="flex flex-col h-screen no-scroll">
       <Header />
-      <main className="flex-1 overflow-auto pt-[76px]">
+      <main className="flex-1 overflow-auto pt-[76px] no-scroll">
         <Suspense fallback={<Loading />}>
           <SessionWrapper>
             <section className="container mx-auto">

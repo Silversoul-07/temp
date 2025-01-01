@@ -5,8 +5,11 @@ import Cookies from 'js-cookie';
 
 const SessionWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const router = useRouter();
+    // useEffect(() => {
+    //   window.scrollTo(0, 0);
+    // }, []); // Runs when layout is mounted
   
-    useEffect(() => {
+      useEffect(() => {
       const handleCookieChange = () => {
         const token = Cookies.get('token');
         if (!token) {

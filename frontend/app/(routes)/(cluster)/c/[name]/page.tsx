@@ -25,7 +25,7 @@ export async function generateMetadata(
 export default async function CollectionPage({ params, searchParams }: Props) {
   const name = (await params).name
   const info = await fetchCollectionInfo(name)
-  const media = await fetchCollectionItems(name);
+  const media = await fetchCollectionItems('me', name)
   return (
     <div>
       <Collection info={info} />

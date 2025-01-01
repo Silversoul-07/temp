@@ -4,24 +4,28 @@ import { uploadMedia } from "@/lib/minio";
 import { extractToken } from "@/lib/helper";
 
 export async function GET(request: NextRequest) {
-    try {
-        const num = request.nextUrl.searchParams.get('limit') as string;
-        const feed = await getLatestFeed(parseInt(num || "100"));
-        return NextResponse.json(feed);
-    }
-    catch (error: any) {
-        console.error('Feed Error:', error);
-        return NextResponse.json(
-            { success: false, message: error.message || 'Internal Server Error' },
-            { status: 500 }
-        );
-    }
+  try {
+      const limit = parseInt(request.nextUrl.searchParams.get('limit') || "20");
+      const page = parseInt(request.nextUrl.searchParams.get('page') || "1");
+      const feed = await getLatestFeed(limit, page);
+      const updatedFeed = feed.map(image => ({
+        ...image,
+        liked: false
+      }));
+      
+      return NextResponse.json(updatedFeed);
+  }
+  catch (error: any) {
+      console.error('Feed Error:', error);
+      return NextResponse.json(
+          { success: false, message: error.message || 'Internal Server Error' },
+          { status: 500 }
+      );
+  }
 }
-
 export async function POST(request: NextRequest) {
     try {
       const token = await extractToken(request);
-      console.log('Token:', token);
       if (!token) {
         return NextResponse.json(
           { success: false, message: 'Unauthorized' },

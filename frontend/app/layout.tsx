@@ -27,7 +27,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             disableTransitionOnChange
           >
             {children}
-            <Toaster position="top-right" richColors expand={false} />
+            <Toaster position="top-right" richColors expand={true} toastOptions={{className: 'mt-[40px]'}}/>
         </ThemeProvider>
         </body>
       </html>
